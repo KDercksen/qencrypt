@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+	<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+	<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+	<script src='https://cdn.rawgit.com/openpgpjs/openpgpjs/dc2d38d3/dist/openpgp.min.js'></script>
+	<script type='text/javascript'>
+		// todo: fix this
+		$(function() {
+			$('#encrypt').click(function() {
+				var openpgp = window.openpgp;
+				var key = $('#pubkey').val();
+				var msg = $('#msg').val();
+				var options = {
+					data: msg,
+					publicKeys: openpgp.key.readArmored(key).keys
+				};
+				openpgp.encrypt(options).then(function(enc) {
+					$('#msg-encrypted').val(enc.data);
+				});
+			});
+
+			$('#copy').click(function() {
+				$('#msg-encrypted').select();
+				document.execCommand('copy');
+			});
+		});
+	</script>
+</head>
+<body>
+<div class='container'>
+	<h2>Easy PGP encryption</h2>
+	<p>Quickly encrypt messages with PGP!</p>
+	<button type='button' class='btn btn-info' data-toggle='collapse' data-target='#usage'>Usage</button>
+	<div id='usage' class='collapse'>
+		Paste the public key and message you want to encrypt in the appropriate
+		fields, then click the 'Encrypt' button. You can copy the encrypted
+		message from the encrypted message textarea.  Alternatively, copy the
+		encrypted message to your clipboard by clicking the 'Copy to clipboard'
+		button.
+	</div>
+	<hr />
+	<form>
+		<div class='form-group'>
+			<label for='pubkey'>Public key:</label>
+			<textarea class='form-control' rows='4' id='pubkey'></textarea>
+		</div>
+		<div class='form-group'>
+			<label for='msg'>Message:</label>
+			<textarea class='form-control' rows='4' id='msg'></textarea>
+		</div>
+		<button id='encrypt' type='button' class='btn btn-primary'>Encrypt</button>
+	</form>
+	<hr />
+	<form>
+		<div class='form-group'>
+			<label for='msg-encrypted'>Encrypted message:</label>
+			<textarea class='form-control' rows='4' id='msg-encrypted' readonly></textarea>
+		</div>
+		<button id='copy' type='button' class='btn btn-primary'>Copy to clipboard</button>
+	</form>
+</div>
+</body>
+</html>
